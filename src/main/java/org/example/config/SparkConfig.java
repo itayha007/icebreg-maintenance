@@ -22,14 +22,14 @@ public class SparkConfig {
 
     @Bean
     public SparkSession sparkSession() {
-        String catalogName = icebergProperties.getCatalog().getName();
-        String catalogType = icebergProperties.getCatalog().getType();
-        String warehouse  = icebergProperties.getCatalog().getWarehouse();
-        String region     = icebergProperties.getCatalog().getGlue().getRegion();
+        String catalogName = this.icebergProperties.getCatalog().getName();
+        String catalogType = this.icebergProperties.getCatalog().getType();
+        String warehouse  = this.icebergProperties.getCatalog().getWarehouse();
+        String region     = this.icebergProperties.getCatalog().getGlue().getRegion();
 
         SparkSession.Builder builder = SparkSession.builder()
-                .master(sparkMaster)
-                .appName(appName)
+                .master(this.sparkMaster)
+                .appName(this.appName)
                 .config("spark.sql.extensions",
                         "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions")
                 .config("spark.sql.catalog." + catalogName,

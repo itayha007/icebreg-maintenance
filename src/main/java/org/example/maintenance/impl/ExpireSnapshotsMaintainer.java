@@ -18,6 +18,6 @@ public class ExpireSnapshotsMaintainer implements IcebergMaintainer {
     @Override
     public void maintain(Table table) {
         log.info("Expiring snapshots on table: {}", table.name());
-        SparkActions.get(spark).expireSnapshots(table).execute();
+        SparkActions.get(this.spark).expireSnapshots(table).execute();
     }
 }

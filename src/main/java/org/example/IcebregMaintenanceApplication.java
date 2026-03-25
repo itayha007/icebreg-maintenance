@@ -23,7 +23,7 @@ public class IcebregMaintenanceApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         log.info("Icebreg Maintenance Application started");
-        maintenanceService.runMaintenance();
+        this.maintenanceService.runMaintenance();
         log.info("Icebreg Maintenance Application finished");
     }
 }

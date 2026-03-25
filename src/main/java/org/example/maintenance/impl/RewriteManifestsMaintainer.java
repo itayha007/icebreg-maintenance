@@ -18,6 +18,6 @@ public class RewriteManifestsMaintainer implements IcebergMaintainer {
     @Override
     public void maintain(Table table) {
         log.info("Rewriting manifests on table: {}", table.name());
-        SparkActions.get(spark).rewriteManifests(table).execute();
+        SparkActions.get(this.spark).rewriteManifests(table).execute();
     }
 }

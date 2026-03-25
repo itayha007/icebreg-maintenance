@@ -19,21 +19,21 @@ public class SparkIcebergMaintenanceVisitor implements IcebergMaintenanceVisitor
 
     @Override
     public void visitCompaction(Table table) {
-        compactionMaintainer.maintain(table);
+        this.compactionMaintainer.maintain(table);
     }
 
     @Override
     public void visitDeleteOrphanFiles(Table table) {
-        deleteOrphanFilesMaintainer.maintain(table);
+        this.deleteOrphanFilesMaintainer.maintain(table);
     }
 
     @Override
     public void visitRewriteManifests(Table table) {
-        rewriteManifestsMaintainer.maintain(table);
+        this.rewriteManifestsMaintainer.maintain(table);
     }
 
     @Override
     public void visitExpireSnapshots(Table table) {
-        expireSnapshotsMaintainer.maintain(table);
+        this.expireSnapshotsMaintainer.maintain(table);
     }
 }

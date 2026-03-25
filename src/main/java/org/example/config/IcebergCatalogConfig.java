@@ -19,7 +19,7 @@ public class IcebergCatalogConfig {
 
     @Bean
     public Catalog icebergCatalog() {
-        IcebergProperties.CatalogProperties catalogProps = properties.getCatalog();
+        IcebergProperties.CatalogProperties catalogProps = this.properties.getCatalog();
         String type = catalogProps.getType();
         String warehouse = catalogProps.getWarehouse();
 

@@ -18,6 +18,6 @@ public class DeleteOrphanFilesMaintainer implements IcebergMaintainer {
     @Override
     public void maintain(Table table) {
         log.info("Deleting orphan files on table: {}", table.name());
-        SparkActions.get(spark).deleteOrphanFiles(table).execute();
+        SparkActions.get(this.spark).deleteOrphanFiles(table).execute();
     }
 }

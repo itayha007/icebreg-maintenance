@@ -23,15 +23,15 @@ public class MaintenanceService {
     private final IcebergMaintenanceVisitor visitor;
 
     public void runMaintenance() {
-        List<MaintenanceType> enabledTypes = properties.getMaintenance().getEnabledTypes();
+        List<MaintenanceType> enabledTypes = this.properties.getMaintenance().getEnabledTypes();
         loadTables().parallelStream()
-                .forEach(table -> enabledTypes.forEach(type -> type.visit(visitor, table)));
+                .forEach(table -> enabledTypes.forEach(type -> type.visit(this.visitor, table)));
     }
 
     private List<Table> loadTables() {
-        return properties.getDatabases().stream()
-                .flatMap(db -> icebergCatalog.listTables(Namespace.of(db)).stream())
-                .map(icebergCatalog::loadTable)
+        return this.properties.getDatabases().stream()
+                .flatMap(db -> this.icebergCatalog.listTables(Namespace.of(db)).stream())
+                .map(this.icebergCatalog::loadTable)
                 .collect(Collectors.toList());
     }
 }

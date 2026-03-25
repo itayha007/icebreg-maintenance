@@ -18,6 +18,6 @@ public class CompactionMaintainer implements IcebergMaintainer {
     @Override
     public void maintain(Table table) {
         log.info("Running compaction on table: {}", table.name());
-        SparkActions.get(spark).rewriteDataFiles(table).execute();
+        SparkActions.get(this.spark).rewriteDataFiles(table).execute();
     }
 }
