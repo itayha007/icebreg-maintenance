@@ -8,6 +8,7 @@ import org.apache.iceberg.catalog.Namespace;
 import org.example.config.IcebergProperties;
 import org.example.maintenance.IcebergMaintenanceVisitor;
 import org.example.maintenance.MaintenanceType;
+import org.example.maintenance.SparkIcebergMaintenanceVisitor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,11 +21,11 @@ public class MaintenanceService {
 
     private final Catalog icebergCatalog;
     private final IcebergProperties properties;
-    private final IcebergMaintenanceVisitor visitor;
+    private final SparkIcebergMaintenanceVisitor visitor;
 
     public void runMaintenance() {
         List<MaintenanceType> enabledTypes = this.properties.getMaintenance().getEnabledTypes();
-        loadTables().parallelStream()
+        this.loadTables().parallelStream()
                 .forEach(table -> enabledTypes.forEach(type -> type.visit(this.visitor, table)));
     }
 
