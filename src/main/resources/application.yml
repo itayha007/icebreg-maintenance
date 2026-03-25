@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: icebreg-maintenance
+
+iceberg:
+  catalog:
+    name: glue_catalog
+    type: glue                          # glue | hadoop | hive | rest
+    warehouse: s3://your-bucket/warehouse
+    glue:
+      account-id: your-aws-account-id
+      region: us-east-1
+  databases:
+    - your_database
+  maintenance:
+    enabled-types:
+      - COMPACTION
+      - DELETE_ORPHAN_FILES
+      - REWRITE_MANIFESTS
+      - EXPIRE_SNAPSHOTS
+
+spark:
+  master: local[*]
+  app-name: icebreg-maintenance
