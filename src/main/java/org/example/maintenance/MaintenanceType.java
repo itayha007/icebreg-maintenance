@@ -1,40 +1,36 @@
 package org.example.maintenance;
 
-import org.apache.spark.sql.SparkSession;
-import org.example.maintenance.impl.CompactionMaintainer;
-import org.example.maintenance.impl.DeleteOrphanFilesMaintainer;
-import org.example.maintenance.impl.ExpireSnapshotsMaintainer;
-import org.example.maintenance.impl.RewriteManifestsMaintainer;
+import org.apache.iceberg.Table;
 
 public enum MaintenanceType {
 
     COMPACTION {
         @Override
-        public IcebergMaintainer getMaintainer(SparkSession spark) {
-            return new CompactionMaintainer(spark);
+        public void visit(IcebergMaintenanceVisitor visitor, Table table) {
+            visitor.visitCompaction(table);
         }
     },
 
     DELETE_ORPHAN_FILES {
         @Override
-        public IcebergMaintainer getMaintainer(SparkSession spark) {
-            return new DeleteOrphanFilesMaintainer(spark);
+        public void visit(IcebergMaintenanceVisitor visitor, Table table) {
+            visitor.visitDeleteOrphanFiles(table);
         }
     },
 
     REWRITE_MANIFESTS {
         @Override
-        public IcebergMaintainer getMaintainer(SparkSession spark) {
-            return new RewriteManifestsMaintainer(spark);
+        public void visit(IcebergMaintenanceVisitor visitor, Table table) {
+            visitor.visitRewriteManifests(table);
         }
     },
 
     EXPIRE_SNAPSHOTS {
         @Override
-        public IcebergMaintainer getMaintainer(SparkSession spark) {
-            return new ExpireSnapshotsMaintainer(spark);
+        public void visit(IcebergMaintenanceVisitor visitor, Table table) {
+            visitor.visitExpireSnapshots(table);
         }
     };
 
-    public abstract IcebergMaintainer getMaintainer(SparkSession spark);
+    public abstract void visit(IcebergMaintenanceVisitor visitor, Table table);
 }

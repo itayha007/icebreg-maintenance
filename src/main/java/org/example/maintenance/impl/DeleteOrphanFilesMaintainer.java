@@ -6,8 +6,10 @@ import org.apache.iceberg.Table;
 import org.apache.iceberg.spark.actions.SparkActions;
 import org.apache.spark.sql.SparkSession;
 import org.example.maintenance.IcebergMaintainer;
+import org.springframework.stereotype.Component;
 
 @Log4j2
+@Component
 @RequiredArgsConstructor
 public class DeleteOrphanFilesMaintainer implements IcebergMaintainer {
 
@@ -16,9 +18,6 @@ public class DeleteOrphanFilesMaintainer implements IcebergMaintainer {
     @Override
     public void maintain(Table table) {
         log.info("Deleting orphan files on table: {}", table.name());
-        SparkActions.get(spark)
-                .deleteOrphanFiles(table)
-                .execute();
-        log.info("Orphan file deletion completed for table: {}", table.name());
+        SparkActions.get(spark).deleteOrphanFiles(table).execute();
     }
 }

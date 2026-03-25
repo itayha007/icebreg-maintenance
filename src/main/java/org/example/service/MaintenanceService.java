@@ -5,8 +5,8 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.iceberg.Table;
 import org.apache.iceberg.catalog.Catalog;
 import org.apache.iceberg.catalog.Namespace;
-import org.apache.spark.sql.SparkSession;
 import org.example.config.IcebergProperties;
+import org.example.maintenance.IcebergMaintenanceVisitor;
 import org.example.maintenance.MaintenanceType;
 import org.springframework.stereotype.Service;
 
@@ -17,16 +17,15 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MaintenanceService {
-    private final SparkSession spark;
+
     private final Catalog icebergCatalog;
     private final IcebergProperties properties;
+    private final IcebergMaintenanceVisitor visitor;
 
     public void runMaintenance() {
         List<MaintenanceType> enabledTypes = properties.getMaintenance().getEnabledTypes();
-        this.loadTables().parallelStream()
-                .forEach(table -> {
-                    enabledTypes.forEach(type -> type.getMaintainer(spark).maintain(table));
-                });
+        loadTables().parallelStream()
+                .forEach(table -> enabledTypes.forEach(type -> type.visit(visitor, table)));
     }
 
     private List<Table> loadTables() {

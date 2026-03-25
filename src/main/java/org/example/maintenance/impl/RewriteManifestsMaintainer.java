@@ -6,8 +6,10 @@ import org.apache.iceberg.Table;
 import org.apache.iceberg.spark.actions.SparkActions;
 import org.apache.spark.sql.SparkSession;
 import org.example.maintenance.IcebergMaintainer;
+import org.springframework.stereotype.Component;
 
 @Log4j2
+@Component
 @RequiredArgsConstructor
 public class RewriteManifestsMaintainer implements IcebergMaintainer {
 
@@ -16,9 +18,6 @@ public class RewriteManifestsMaintainer implements IcebergMaintainer {
     @Override
     public void maintain(Table table) {
         log.info("Rewriting manifests on table: {}", table.name());
-        SparkActions.get(spark)
-                .rewriteManifests(table)
-                .execute();
-        log.info("Manifest rewrite completed for table: {}", table.name());
+        SparkActions.get(spark).rewriteManifests(table).execute();
     }
 }
