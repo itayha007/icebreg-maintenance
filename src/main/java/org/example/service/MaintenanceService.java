@@ -5,7 +5,6 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.iceberg.Table;
 import org.apache.iceberg.catalog.Catalog;
 import org.apache.iceberg.catalog.Namespace;
-import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.spark.sql.SparkSession;
 import org.example.config.IcebergProperties;
 import org.example.maintenance.MaintenanceType;
@@ -18,49 +17,22 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MaintenanceService {
-
     private final SparkSession spark;
     private final Catalog icebergCatalog;
     private final IcebergProperties properties;
 
     public void runMaintenance() {
         List<MaintenanceType> enabledTypes = properties.getMaintenance().getEnabledTypes();
-        List<String> databases = properties.getDatabases();
-
-        log.info("Starting Iceberg maintenance for databases: {}", databases);
-        log.info("Enabled maintenance types: {}", enabledTypes);
-
-        for (String database : databases) {
-            List<Table> tables = loadTablesFromDatabase(database);
-            log.info("Found {} tables in database '{}'", tables.size(), database);
-
-            for (Table table : tables) {
-                for (MaintenanceType type : enabledTypes) {
-                    try {
-                        log.info("Running {} on {}", type, table.name());
-                        type.getMaintainer(spark).maintain(table);
-                    } catch (Exception e) {
-                        log.error("Failed to run {} on table {}: {}", type, table.name(), e.getMessage(), e);
-                    }
-                }
-            }
-        }
-
-        log.info("Iceberg maintenance completed.");
+        this.loadTables().parallelStream()
+                .forEach(table -> {
+                    enabledTypes.forEach(type -> type.getMaintainer(spark).maintain(table));
+                });
     }
 
-    private List<Table> loadTablesFromDatabase(String database) {
-        Namespace namespace = Namespace.of(database);
-        return icebergCatalog.listTables(namespace).stream()
-                .map(identifier -> {
-                    try {
-                        return icebergCatalog.loadTable(identifier);
-                    } catch (Exception e) {
-                        log.error("Failed to load table {}: {}", identifier, e.getMessage(), e);
-                        return null;
-                    }
-                })
-                .filter(table -> table != null)
+    private List<Table> loadTables() {
+        return properties.getDatabases().stream()
+                .flatMap(db -> icebergCatalog.listTables(Namespace.of(db)).stream())
+                .map(icebergCatalog::loadTable)
                 .collect(Collectors.toList());
     }
 }
